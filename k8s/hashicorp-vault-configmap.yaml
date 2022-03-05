@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vault-server
+  namespace: [B_NAMESPACE]
+data:
+  APPLICATION_CREDENTIALS: [B_APPLICATION_CREDENTIALS]
+  VAULT_LOCAL_CONFIG: 'api_addr = "http://localhost:8200" storage "[B_STORAGE]" { bucket = "[B_NAME_BUCKET]" ha_enabled = "true" } seal "[B_SEAL]" { project = "[B_NAME_PROJECT]" region = "global" key_ring = "vault" crypto_key = "vault" } listener "tcp" { address = "0.0.0.0:8200" tls_disable = 1 } disable_mlock = true ui = true'

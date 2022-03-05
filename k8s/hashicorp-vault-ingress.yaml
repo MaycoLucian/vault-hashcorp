@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.allow-http: "false"
+  name: vault-server
+  namespace: [B_NAMESPACE]
+spec:
+  rules:
+  - host: [B_HOST]
+    http:
+      paths:
+      - backend:
+          serviceName: vault-server
+          servicePort: 80
+        path: /
+      - backend:
+          serviceName: vault-server
+          servicePort: 80
+        path: /*
+  tls:
+  - hosts:
+    - [B_HOST]
+    secretName: [B_SECRET_NAME]

@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: vault-server
+    imageVersion: "1.1.0"
+  name: vault-server
+  namespace: [B_NAMESPACE]
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vault-server
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: vault-server
+        imageVersion: "1.1.0"
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: vault-server
+        image: [B_IMAGE_VERSION]
+        args: [ "server" ]
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - mountPath: /secrets
+          name: vault-server
+          readOnly: true
+        name: [B_NAMESPACE]
+        resources:
+          requests:
+            memory: [B_REQUEST_MEMORY]
+        ports:
+        - containerPort: 8200
+        readinessProbe:
+          httpGet:
+            path: /v1/sys/health
+            port: 8200
+          timeoutSeconds: 3
+      nodeSelector:
+        env: [B_ENV]
+      restartPolicy: Always
+      volumes:
+      - name: vault-server
+        secret:
+          defaultMode: 420
+          secretName: vault-server
